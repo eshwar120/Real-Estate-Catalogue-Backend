@@ -1,0 +1,42 @@
+let mongoose = require("mongoose");
+
+let FinalSchema = mongoose.Schema({
+    length: {type: String, required: true},
+    breadth: {type: String, required: true},
+    total_area: {type: String, required: true},
+    no_of_bhk: {type: String, required: true},
+    attached: {type: String, required: true},
+    furnished: {type: String, required: true},
+    lift: {type: String, required: true},
+    facing: {type: String, required: true},
+    area_unit: {type: String, required: true},
+    no_of_floor: {type: String, required: true},
+    western_toilet: {type: String, required: true},
+    car_parking: {type: String, required: true},
+    electricity: {type: String, required: true},
+    email: {type: String, required: true},
+    area: {type: String, required: true},
+    address: {type: String, required: true},
+    latitude: {type: String, required: true},
+    city: {type: String, required: true},
+    pincode: {type: String, required: true},
+    landmark: {type: String, required: true},
+    longitude: {type: String, required: true},
+    name: {type: String, required: true},
+    mobile: {type: String, required: true},
+    posted_by: {type: String, required: true},
+    sale_type: {type: String, required: true},
+    featured: {type: String, required: true},
+    ppd_package: {type: String, required: true},
+    property_type: {type: String, required: true},
+    price: {type: String, required: true},
+    property_age: {type: String, required: true},
+    property_description: {type: String, required: true},
+    negotiable: {type: String, required: true},
+    ownership: {type: String, required: true},
+    property_approved: {type: String, required: true},
+    bank_loan: {type: String, required: true},
+    image: {type: String, required: true}
+})
+
+module.exports = mongoose.model("FinalInfo", FinalSchema);
