@@ -1,63 +1,50 @@
-const express = require("express");
-const Property = require("../model/Property");
-const addPropertyController = require("../controller/addPropertyController");
+const express = require('express');
+const FinalInfo = require('../models/FinalInfo');
+const addPropertyController = require('../controller/addPropertyController');
 const propertyRoute = express.Router();
 
-propertyRoute.post('/addNew', addPropertyController);
 
-propertyRoute.get('', async (req, res) => {
-    try {
-        const data = Property.find({}).sort("-postedOn");
-        res.status(200).json({
-            "status": "success",
-            "result": data
-        })
-    }
-    catch (err) {
-        res.status(500).json({ "status": err.message });
-    }
-
-});
-
-propertyRoute.get('/:id', async (req, res) => {
-    const id = req.params.id;
+propertyRoute.get('/:userId', async (req, res) => {
+    const id = req.params.userId;
     if (id) {
         try {
-            const data = Property.findOne({ PPDId: id }).sort("-postedOn");
-            res.status(200).json({
+            const dataFromDB = await FinalInfo.find({ authorId: id });
+            return res.status(200).json({
                 "status": "success",
-                "result": data
+                data: dataFromDB
             })
         }
         catch (err) {
-            res.status(500).json({ "status": err.message });
-        }
-    }
-    else {
-        res.status(404).json({ "status": "failed" })
-    }
-
-});
-
-
-propertyRoute.patch('/:id', async (req, res) => {
-    const id = req.params.id;
-    const newPropertyData = req.body;
-    if (id && newPropertyData) {
-        try {
-            const data = await Property.updateOne({ _id: id }, newPropertyData);
-            res.status(200).json({
-                "status": "success",
-                "result": data
-            })
-        }
-        catch (err) {
-            res.status(500).json({ "status": err.message });
+            res.status(500).json({ "status": err.message })
         }
     }
     else {
         res.status(400).json({ "status": "failed" })
     }
-})
+});
+
+
+propertyRoute.post('', addPropertyController);
+
+propertyRoute.patch('/propertyId', async (req, res) => {
+    const id = req.params.propertyId;
+    const newData = req.body;
+    if (id && newData) {
+        try {
+            const dataFromDB = await FinalInfo.updateOne({_id : id}, newData)
+            return res.status(200).json({
+                "status": "success",
+            })
+        }
+        catch (err) {
+            res.status(500).json({ "status": err.message })
+        }
+    }
+    else {
+        res.status(400).json({ "status": "failed" })
+    }
+    
+});
+
 
 module.exports = propertyRoute;

@@ -1,10 +1,12 @@
+const multer = require('multer');
 const { initializeApp } = require("firebase/app");
 const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require("firebase/storage");
-const multer = require("multer");
-const firebaseConfig = require("../config/fireBase");
+const firebaseConfig = require("../db/fireBase");
 const express = require("express");
-const Property = require("../model/Property");
+const general_info = require('../models/Add-property/general_info');
+const FinalInfo = require('../models/FinalInfo');
 const addPropertyController = express.Router();
+
 
 // Initialize Firebase
 initializeApp(firebaseConfig);
@@ -15,12 +17,13 @@ const storage = getStorage();
 //setting up multer as a middle ware to grab photo uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
-addPropertyController.post('', upload.single("propertyImage"), async (req, res) => {
-    console.log(true)
+addPropertyController.use('', upload.single("image"), async (req, res) => {
+    console.log(true, "add")
     try {
+        console.log(true, "generalinfo");
+        console.log(req.body);
         const dateTime = giveCurrentDateTime();
         const storageRef = ref(storage, `files/${req.file.originalname + "    " + dateTime}`);
-
         //create file metadata including the content type
         const metaData = {
             contentType: req.file.mimetype
@@ -33,63 +36,24 @@ addPropertyController.post('', upload.single("propertyImage"), async (req, res) 
         //grap public url
         const downloadURL = await getDownloadURL(snapShot.ref);
 
-        const propertyData = req.body;
-        if (downloadURL) {
-            const post = new Property({
-                propertyType: propertyData.propertyType,
-                negotiable: propertyData.negotiable,
-                price: propertyData.price,
-                ownerShip: propertyData.ownerShip,
-                propertyAge: propertyData.propertyAge,
-                propertyApproved: propertyData.propertyApproved,
-                propertyDescription: propertyData.propertyDescription,
-                bankLoan: propertyData.bankLoan,
-                propertyLength: propertyData.PropertyLength,
-                propertyBreadth: propertyData.PropertyBreadth,
-                propertyArea: propertyData.PropertyArea,
-                propertyAreaUnit: propertyData.PropertyAreaUnit,
-                noOfBHK: propertyData.noOfBHK,
-                noOfFloor: propertyData.noOfFloor,
-                Attached: propertyData.Attached,
-                westernToilet: propertyData.westernToilet,
-                furnished: propertyData.furnished,
-                carParking: propertyData.carParking,
-                lift: propertyData.lift,
-                electricity: propertyData.electricity,
-                facing: propertyData.facing,
-                name: propertyData.name,
-                mobile: propertyData.mobile,
-                postedBy: propertyData.postedBy,
-                saleType: propertyData.saleType,
-                featuredPackage: propertyData.featuredPackage,
-                PPDPackage: propertyData.PPDPackage,
-                propertyImage: downloadURL,
-                UserEmail: propertyData.UserEmail,
-                city: propertyData.city,
-                locationArea: propertyData.locationArea,
-                pincode: propertyData.pincode,
-                address: propertyData.address,
-                landmark: propertyData.landmark,
-                latitude: propertyData.latitude,
-                longitude: propertyData.longitude,
-                authorId: propertyData.authorId,
-                postedOn: new Date()
-            });
+        const propertyDetails = new FinalInfo ({
+            ...req.body,
+            image: downloadURL
+        })
+        const data = await propertyDetails.save();
 
-            const data = await Property.save();
-            if (data) {
-                return res.status(201).json({
-                    "status": "success",
-                    "result": data,
-                });
-            }
-            res.status(400).json({
-                "status": "failed",
-            });
-        }
+        console.log(data)
+        return res.status(200).json({
+            message: "success",
+            data
+        })
+
     }
-    catch (err) {
-        return res.status(500).json({ "status": err.message })
+    catch (e) {
+        console.log(e)
+        return res.status(400).json({
+            "message": e.message
+        })
     }
 });
 
@@ -100,5 +64,6 @@ const giveCurrentDateTime = () => {
     const dateTime = date + ' ' + time;
     return dateTime;
 }
+
 
 module.exports = addPropertyController;
