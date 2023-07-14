@@ -10,12 +10,9 @@ userRoute.post('/signup', async (req, res) => {
         console.log(req.body)
         try {
           if(userData.password !== userData.confirmPassword){
-            return res.status(400).json({
-              "status": "failed",
-              "message": "password is not matching"
-            })
+            return res.status(400).json({"message": "password is not matching"})
           }
-          
+
             const doesUserExist = await User.findOne({email : userData.email});
             if(doesUserExist) throw new Error('User already exists')
             
@@ -25,14 +22,14 @@ userRoute.post('/signup', async (req, res) => {
                 password: encryptedPassword
             });
             await data.save();
-            res.status(201).json({ "status": "success" });
+            res.status(201).json({ "message" : "User created successsfully" });
         }
         catch (err) {
-            res.status(400).json({ "status": err.message });
+            res.status(409).json({ "message" : err.message });
         }
     }
     else {
-        res.status(400).json({ "status": "failed" });
+        res.status(400).json({ "message": "Sign up failed" });
     }
 });
 
@@ -56,26 +53,26 @@ userRoute.post('/signin', async (req, res) => {
                         { expiresIn: "20m" }
                     );
                     res.status(200).json({ 
-                        "status": "success" ,
+                        "message": "success" ,
                         email: userDataFromDB.email,
                         id: userDataFromDB.id,
                         "token" : accessToken
                     });
                 }
                 else {
-                    res.status(401).json({ "status": "failed" });
+                    res.status(401).json({ "messsage": "failed" });
                 }
             }
             else {
-                res.status(401).json({ "status": "failed" });
+                res.status(401).json({ "message": "failed" });
             }
         }
         catch (err) {
-            res.status(401).json({ "status": err.message });
+            res.status(401).json({ "message": err.message });
         }
     }
     else {
-        res.status(401).json({ "status": "failed" });
+        res.status(401).json({ "message": "failed" });
     }
 });
 
