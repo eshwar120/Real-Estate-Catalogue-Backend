@@ -15,6 +15,7 @@ userRoute.post('/signup', async (req, res) => {
               "message": "password is not matching"
             })
           }
+          
             const doesUserExist = await User.findOne({email : userData.email});
             if(doesUserExist) throw new Error('User already exists')
             
