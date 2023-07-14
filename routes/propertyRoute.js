@@ -10,16 +10,16 @@ propertyRoute.get('/:userId', async (req, res) => {
         try {
             const dataFromDB = await FinalInfo.find({ authorId: id });
             return res.status(200).json({
-                "status": "success",
+                "message": "success",
                 data: dataFromDB
             })
         }
         catch (err) {
-            res.status(500).json({ "status": err.message })
+            res.status(500).json({ "message": err.message })
         }
     }
     else {
-        res.status(400).json({ "status": "failed" })
+        res.status(400).json({ "message": "failed" })
     }
 });
 
@@ -33,15 +33,15 @@ propertyRoute.patch('/propertyId', async (req, res) => {
         try {
             const dataFromDB = await FinalInfo.updateOne({_id : id}, newData)
             return res.status(200).json({
-                "status": "success",
+                "message": "success",
             })
         }
         catch (err) {
-            res.status(500).json({ "status": err.message })
+            res.status(500).json({ "message": err.message })
         }
     }
     else {
-        res.status(400).json({ "status": "failed" })
+        res.status(400).json({ "message": "failed" })
     }
     
 });

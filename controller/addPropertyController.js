@@ -44,7 +44,7 @@ addPropertyController.use('', upload.single("image"), async (req, res) => {
 
         console.log(data)
         return res.status(200).json({
-            message: "success",
+            "message": "Property added successfully",
             data
         })
 
