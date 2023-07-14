@@ -2,7 +2,7 @@ const express = require('express');
 const userRoute = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user_info');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 userRoute.post('/signup', async (req, res) => {
     const userData = req.body;
@@ -15,6 +15,9 @@ userRoute.post('/signup', async (req, res) => {
               "message": "password is not matching"
             })
           }
+            const doesUserExist = await User.findOne({email : userData.email});
+            if(doesUserExist) throw new Error('User already exists')
+            
             const encryptedPassword = bcrypt.hashSync(userData.password, 15);
             const data = new User({
                 email: userData.email,
